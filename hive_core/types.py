@@ -22,6 +22,8 @@ class Detection:
     range: float
     bearing: float
     confidence: float
+    x: float = 0.0
+    y: float = 0.0
     timestamp: float = field(default_factory=time.time)
 
 @dataclass
@@ -51,8 +53,13 @@ class Task:
 class RobotStatus:
     id: str
     pose: Pose2D
-    velocity: Tuple[float, float]  # linear, angular
+    velocity: Tuple[float, float]
     current_task_id: Optional[str]
-    state: str  # IDLE, MOVING, BLOCKED, CHARGING
+    state: str
     timestamp: float = field(default_factory=time.time)
 
+@dataclass
+class Event:
+    type: str
+    payload: Dict
+    timestamp: float = field(default_factory=time.time)
