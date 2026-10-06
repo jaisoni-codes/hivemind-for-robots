@@ -12,7 +12,7 @@ class LivingMemory:
         self._init_db()
         self.records: Dict[str, ObjectRecord] = {}
         self.half_life_sec = 300.0
-        self.snapshots = {} # Map integrity snapshots
+        self.snapshots = {} 
         
     def _init_db(self):
         cursor = self.conn.cursor()
@@ -47,9 +47,8 @@ class LivingMemory:
         return f"{label}_{int(time.time()*1000)}_{len(self.records)}"
 
     def ingest_detection(self, detection: Detection, robot_id: str, loc_state: str = "OK"):
-        # Write gate for degraded/lost robots
         if is_enabled('loc_confidence_gate') and loc_state != "OK":
-            return # Ignore data from uncertain robots
+            return 
             
         best_match = None
         min_dist = 0.7
@@ -63,6 +62,14 @@ class LivingMemory:
                     
         if best_match:
             record = self.records[best_match]
+            
+            # A4: If a "stable landmark" has moved significantly, demote it
+            d_moved = math.hypot(record.pose.x - detection.x, record.pose.y - detection.y)
+            if record.seen_count > 5 and d_moved > 0.3:
+                record.state = 'MOVED'
+                record.confidence = 0.5
+                record.seen_count = 1 # Reset stability
+            
             record.pose.x = detection.x
             record.pose.y = detection.y
             record.confidence = min(1.0, record.confidence + detection.confidence * 0.5)
@@ -123,8 +130,11 @@ class LivingMemory:
     def get_all(self) -> List[ObjectRecord]:
         return list(self.records.values())
 
+    def get_landmarks(self) -> List[ObjectRecord]:
+        # A4: Static, distinctive objects seen many times become landmarks
+        return [r for r in self.records.values() if r.seen_count > 3 and r.state == 'ACTIVE' and r.confidence > 0.8]
+
     def snapshot(self, timestamp: float):
-        # Very simple mock of map integrity snapshots
         self.snapshots[timestamp] = {k: v.confidence for k, v in self.records.items()}
         
     def rollback(self, timestamp: float):
