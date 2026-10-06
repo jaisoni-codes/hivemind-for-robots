@@ -11,3 +11,4 @@
 - [x] M12: Polish and repo completion
 - [x] A0: Audit, COMPLIANCE.md, Config flags
 - [x] A1: Localisation confidence, write gate, map integrity (Scenarios 3, 4, 5)
+- [x] A2: Scenario harness (35 YAMLs, scenarios.csv, T1 evaluations)

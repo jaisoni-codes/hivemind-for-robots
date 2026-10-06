@@ -1,0 +1,7 @@
+id: 4
+name: 'identical_aisles'
+tier: 'T1'
+baseline_fails_by: 'Robot believes it is in another aisle'
+hivemind_mechanism: 'Multi-hypothesis pose, ratio test'
+metric: 'Wrong-aisle rate'
+seed: 42

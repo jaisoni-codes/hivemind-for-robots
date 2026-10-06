@@ -1,0 +1,7 @@
+id: 22
+name: 'human_crosses_path'
+tier: 'T2'
+baseline_fails_by: 'Late braking'
+hivemind_mechanism: 'Arrival-time-aware risk'
+metric: 'Min time-to-collision'
+seed: 42

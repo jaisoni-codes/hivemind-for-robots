@@ -1,0 +1,7 @@
+id: 5
+name: 'wrong_loop_closure'
+tier: 'T3'
+baseline_fails_by: 'Map warps'
+hivemind_mechanism: 'Geometric verification + map rollback'
+metric: 'Map consistency'
+seed: 42

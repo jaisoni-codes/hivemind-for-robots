@@ -1,0 +1,7 @@
+id: 8
+name: 'pallet_appears'
+tier: 'T1'
+baseline_fails_by: 'Collides with stale map'
+hivemind_mechanism: 'Local map update + replan'
+metric: 'Detection-to-replan latency'
+seed: 42

@@ -1,0 +1,7 @@
+id: 18
+name: 'human_turns_suddenly'
+tier: 'T2'
+baseline_fails_by: 'Wrong prediction'
+hivemind_mechanism: 'Uncertainty-aware margin'
+metric: 'Near-misses'
+seed: 42

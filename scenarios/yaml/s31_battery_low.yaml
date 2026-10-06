@@ -1,0 +1,7 @@
+id: 31
+name: 'battery_low'
+tier: 'T4'
+baseline_fails_by: 'Dies mid-task'
+hivemind_mechanism: 'Battery-aware allocation + dock'
+metric: 'Tasks lost'
+seed: 42

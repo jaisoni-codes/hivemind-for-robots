@@ -1,0 +1,7 @@
+id: 24
+name: 'glass_shiny_surface'
+tier: 'T3'
+baseline_fails_by: 'Misses obstacle'
+hivemind_mechanism: 'Confidence + multi-frame'
+metric: 'Collisions'
+seed: 42

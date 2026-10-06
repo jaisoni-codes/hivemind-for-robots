@@ -1,0 +1,7 @@
+id: 35
+name: 'command_latency_500ms'
+tier: 'T2'
+baseline_fails_by: 'Acts on stale command'
+hivemind_mechanism: 'Robot-side safety decisions'
+metric: 'Collisions under lag'
+seed: 42

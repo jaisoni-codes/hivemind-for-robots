@@ -1,0 +1,7 @@
+id: 17
+name: 'sudden_human'
+tier: 'T1'
+baseline_fails_by: 'No prediction'
+hivemind_mechanism: 'Tracker + trained predictor'
+metric: 'Collisions, near-misses'
+seed: 42

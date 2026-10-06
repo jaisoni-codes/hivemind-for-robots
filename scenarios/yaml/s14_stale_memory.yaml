@@ -1,0 +1,7 @@
+id: 14
+name: 'stale_memory'
+tier: 'T2'
+baseline_fails_by: 'Blind trip'
+hivemind_mechanism: 'VERIFY task first'
+metric: 'Wasted trips'
+seed: 42

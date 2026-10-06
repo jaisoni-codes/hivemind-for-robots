@@ -1,0 +1,7 @@
+id: 26
+name: 'dust_sensor_noise'
+tier: 'T3'
+baseline_fails_by: 'Ghost obstacles'
+hivemind_mechanism: 'Filtering + confidence-aware speed'
+metric: 'False-stop rate'
+seed: 42

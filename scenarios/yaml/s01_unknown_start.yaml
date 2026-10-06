@@ -1,0 +1,7 @@
+id: 1
+name: 'unknown_start'
+tier: 'T1'
+baseline_fails_by: 'No goal without a map'
+hivemind_mechanism: 'SLAM + frontier exploration'
+metric: '% area mapped vs time'
+seed: 42

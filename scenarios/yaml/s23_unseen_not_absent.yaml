@@ -1,0 +1,7 @@
+id: 23
+name: 'unseen_not_absent'
+tier: 'T3'
+baseline_fails_by: 'Treats unseen as free'
+hivemind_mechanism: 'Unknown-space risk layer'
+metric: 'Collisions at occluded crossing'
+seed: 42

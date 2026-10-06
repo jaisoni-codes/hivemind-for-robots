@@ -1,0 +1,7 @@
+id: 29
+name: 'two_robots_one_corridor'
+tier: 'T1'
+baseline_fails_by: 'Deadlock'
+hivemind_mechanism: 'Reservation, priority, pull-over bay'
+metric: 'Deadlocks per 100 runs'
+seed: 42

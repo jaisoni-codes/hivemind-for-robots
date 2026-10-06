@@ -1,0 +1,7 @@
+id: 21
+name: 'blind_corner'
+tier: 'T3'
+baseline_fails_by: 'Late reaction'
+hivemind_mechanism: 'Occlusion-aware speed cap'
+metric: 'Near-misses'
+seed: 42

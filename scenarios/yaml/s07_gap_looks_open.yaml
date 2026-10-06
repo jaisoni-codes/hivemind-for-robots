@@ -1,0 +1,7 @@
+id: 7
+name: 'gap_looks_open'
+tier: 'T2'
+baseline_fails_by: 'Gets stuck'
+hivemind_mechanism: 'Configuration-space planning'
+metric: 'Stuck rate'
+seed: 42

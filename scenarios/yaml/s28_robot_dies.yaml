@@ -1,0 +1,7 @@
+id: 28
+name: 'robot_dies'
+tier: 'T1'
+baseline_fails_by: 'Task stuck'
+hivemind_mechanism: 'Heartbeat + reassignment'
+metric: 'Recovery time'
+seed: 42

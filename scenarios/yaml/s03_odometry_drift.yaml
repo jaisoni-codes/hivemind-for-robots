@@ -1,0 +1,7 @@
+id: 3
+name: 'odometry_drift'
+tier: 'T1'
+baseline_fails_by: 'Pose error grows'
+hivemind_mechanism: 'Scan-to-map matching + loop closure'
+metric: 'Pose error per metre'
+seed: 42

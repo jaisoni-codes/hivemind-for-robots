@@ -1,0 +1,7 @@
+id: 27
+name: 'brain_link_lost'
+tier: 'T1'
+baseline_fails_by: 'Robot helpless'
+hivemind_mechanism: 'Autonomy modes, local goal, shield'
+metric: 'Safe-stop rate'
+seed: 42

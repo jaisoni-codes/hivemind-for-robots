@@ -1,0 +1,7 @@
+id: 11
+name: 'layout_changes'
+tier: 'T3'
+baseline_fails_by: 'Old map invalid'
+hivemind_mechanism: 'Change detection + map update'
+metric: 'Map IoU after change'
+seed: 42

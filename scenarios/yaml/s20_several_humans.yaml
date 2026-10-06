@@ -1,0 +1,7 @@
+id: 20
+name: 'several_humans'
+tier: 'T2'
+baseline_fails_by: 'Local minimum'
+hivemind_mechanism: 'Multi-agent prediction, wait/retreat'
+metric: 'Success rate'
+seed: 42

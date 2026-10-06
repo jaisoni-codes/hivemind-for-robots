@@ -1,0 +1,7 @@
+id: 16
+name: 'world_keeps_changing'
+tier: 'T2'
+baseline_fails_by: 'One-time map decays'
+hivemind_mechanism: 'Living memory with decay'
+metric: 'Memory accuracy over time'
+seed: 42

@@ -1,0 +1,7 @@
+id: 13
+name: 'object_moved'
+tier: 'T1'
+baseline_fails_by: 'DB points to old spot'
+hivemind_mechanism: 'Negative observation -> MOVED -> search'
+metric: 'Relocation accuracy'
+seed: 42

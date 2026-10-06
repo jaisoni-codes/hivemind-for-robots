@@ -1,0 +1,7 @@
+id: 32
+name: 'wifi_dead_zone'
+tier: 'T3'
+baseline_fails_by: 'Stale commands'
+hivemind_mechanism: 'Buffering, command TTL, degraded mode'
+metric: 'Task completion'
+seed: 42

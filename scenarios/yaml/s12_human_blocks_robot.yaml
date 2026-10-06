@@ -1,0 +1,7 @@
+id: 12
+name: 'human_blocks_robot'
+tier: 'T3'
+baseline_fails_by: 'Oscillates'
+hivemind_mechanism: 'Wait then detour policy'
+metric: 'Oscillation count'
+seed: 42

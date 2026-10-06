@@ -1,0 +1,7 @@
+id: 30
+name: 'traffic_jam'
+tier: 'T2'
+baseline_fails_by: 'Queue on shortest path'
+hivemind_mechanism: 'Learned ETA + congestion-aware assignment'
+metric: 'Throughput'
+seed: 42

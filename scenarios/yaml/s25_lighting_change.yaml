@@ -1,0 +1,7 @@
+id: 25
+name: 'lighting_change'
+tier: 'T3'
+baseline_fails_by: 'Camera fails'
+hivemind_mechanism: 'LiDAR-first navigation'
+metric: 'Nav success in dark zone'
+seed: 42

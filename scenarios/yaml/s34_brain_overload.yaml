@@ -1,0 +1,7 @@
+id: 34
+name: 'brain_overload'
+tier: 'T2'
+baseline_fails_by: 'Central bottleneck'
+hivemind_mechanism: 'Hierarchical split'
+metric: 'Brain ms per cycle'
+seed: 42

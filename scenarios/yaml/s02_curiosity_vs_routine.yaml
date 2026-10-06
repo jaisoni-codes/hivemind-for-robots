@@ -1,0 +1,7 @@
+id: 2
+name: 'curiosity_vs_routine'
+tier: 'T2'
+baseline_fails_by: 'Map never improves'
+hivemind_mechanism: 'Curiosity patrols of stale zones'
+metric: 'Map freshness'
+seed: 42

@@ -1,0 +1,7 @@
+id: 15
+name: 'several_extinguishers'
+tier: 'T2'
+baseline_fails_by: 'Euclid-nearest is behind a wall'
+hivemind_mechanism: 'Pair choice by path ETA'
+metric: 'Task time vs distance rule'
+seed: 42

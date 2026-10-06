@@ -1,0 +1,7 @@
+id: 9
+name: 'dead_end'
+tier: 'T2'
+baseline_fails_by: 'Repeats attempts'
+hivemind_mechanism: 'No-progress detect, edge BLOCKED'
+metric: 'Retries'
+seed: 42

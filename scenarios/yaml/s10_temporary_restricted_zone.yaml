@@ -1,0 +1,7 @@
+id: 10
+name: 'temporary_restricted_zone'
+tier: 'T3'
+baseline_fails_by: 'Enters zone'
+hivemind_mechanism: 'BLOCKED state with decay + VERIFY'
+metric: 'Zone violations'
+seed: 42

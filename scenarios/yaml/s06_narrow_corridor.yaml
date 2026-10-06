@@ -1,0 +1,7 @@
+id: 6
+name: 'narrow_corridor'
+tier: 'T1'
+baseline_fails_by: 'Clips walls'
+hivemind_mechanism: 'Footprint-aware inflated costmap'
+metric: 'Collisions'
+seed: 42
