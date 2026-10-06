@@ -19,3 +19,8 @@
 - [x] A7: Scenario Lab web page driven by real runs
 - [x] A8: Soak test, black-box logging, battery docking
 - [x] A9: Final reports, documentation, and COMPLIANCE ticks
+- [x] L0: WorldAdapter mutation contract
+- [x] L1: Operator Console 'Live' tab
+- [x] L2: Chat extensions & explanation lines
+- [x] L4: Judge mode, presets, DEMO_SCRIPT.md
+- [x] L5: Robustness and Fallback Documentation

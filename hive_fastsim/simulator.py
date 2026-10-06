@@ -2,7 +2,7 @@ import numpy as np
 import math
 import pickle
 import os
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any
 from hive_core.types import Pose2D
 from hive_core.config import is_enabled
 
@@ -16,22 +16,30 @@ class FastRobot:
         self.max_v = 1.0
         self.max_w = 2.0
         self.path = []
+        self.battery_level = 100.0
 
     def update(self, dt: float):
         self.pose.theta += self.w * dt
         self.pose.theta = (self.pose.theta + math.pi) % (2 * math.pi) - math.pi
         self.pose.x += self.v * math.cos(self.pose.theta) * dt
         self.pose.y += self.v * math.sin(self.pose.theta) * dt
+        # Drain battery slightly
+        self.battery_level -= 0.01 * dt * (abs(self.v) + 0.1)
 
 class Human:
-    def __init__(self, x: float, y: float):
+    def __init__(self, obj_id: str, x: float, y: float, is_dynamic=True):
+        self.id = obj_id
         self.x = x
         self.y = y
-        self.v = 0.5
-        self.theta = np.random.uniform(-math.pi, math.pi)
+        self.v = 0.5 if is_dynamic else 0.0
+        self.theta = np.random.uniform(-math.pi, math.pi) if is_dynamic else 0.0
         self.radius = 0.3
+        self.is_dynamic = is_dynamic
 
     def update(self, dt: float, width: float, height: float, robots: List[FastRobot]):
+        if not self.is_dynamic:
+            return
+            
         if np.random.rand() < 0.05:
             self.theta += np.random.uniform(-1, 1)
         
@@ -72,30 +80,28 @@ class MockCameraDetector:
         self.classes = ['fire_extinguisher', 'pallet', 'toolbox', 'human', 'forklift']
 
     def detect(self, true_label: str) -> Tuple[str, float]:
-        if not is_enabled('detector'): # 'trained' mode
-            return true_label, 1.0 # Oracle mode
+        if not is_enabled('detector'): 
+            return true_label, 1.0 
             
         if self.model is None or true_label not in self.base_vectors:
             return true_label, 1.0
             
-        # Simulate taking a picture and extracting embedding
         base = self.base_vectors[true_label]
         noise = np.random.normal(0, 2.5, 32)
         feature = base + noise
         
-        # ML Prediction
         pred_idx = self.model.predict([feature])[0]
         prob = np.max(self.model.predict_proba([feature])[0])
         
         return self.classes[pred_idx], prob
 
 class Simulator:
-    def __init__(self, width: float=12.0, height: float=12.0):
+    def __init__(self, width: float=20.0, height: float=20.0):
         self.width = width
         self.height = height
         self.robots: List[FastRobot] = []
-        self.humans: List[Human] = []
-        self.objects: List[Dict] = []
+        self.humans: List[Human] = [] # Acts as dynamic/static obstacles
+        self.objects: Dict[str, Dict[str, Any]] = {} # id -> data
         self.tasks_completed = 0
         self.collisions = 0
         self.time = 0.0
@@ -107,9 +113,30 @@ class Simulator:
     def add_human(self, human: Human):
         self.humans.append(human)
         
-    def add_object(self, obj: Dict):
-        self.objects.append(obj)
-        
+    def add_dynamic_object(self, op: Dict):
+        obj_id = op['id']
+        self.objects[obj_id] = op
+        pose = op['pose']
+        # If it's a human/forklift, add to physical bodies
+        if op.get('class') in ['human', 'forklift']:
+            self.humans.append(Human(obj_id, pose[0], pose[1], is_dynamic=True))
+        elif op.get('class') == 'pallet' or op.get('class') == 'box':
+            self.humans.append(Human(obj_id, pose[0], pose[1], is_dynamic=False)) # Static obstacle
+
+    def move_dynamic_object(self, op: Dict):
+        obj_id = op['id']
+        if obj_id in self.objects:
+            self.objects[obj_id]['pose'] = op['pose']
+        for h in self.humans:
+            if h.id == obj_id:
+                h.x = op['pose'][0]
+                h.y = op['pose'][1]
+
+    def remove_dynamic_object(self, obj_id: str):
+        if obj_id in self.objects:
+            del self.objects[obj_id]
+        self.humans = [h for h in self.humans if h.id != obj_id]
+
     def step(self, dt: float):
         self.time += dt
         for robot in self.robots:
