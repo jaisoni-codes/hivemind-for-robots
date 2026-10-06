@@ -28,7 +28,7 @@ def run_scenario(seed=42, headless=False, use_shield=True, num_robots=4, target_
     shield = SafetyShield()
     
     for i in range(5):
-        sim.add_human(Human(random.uniform(4, 16), random.uniform(4, 16)))
+        sim.add_human(Human('h_' + str(i), random.uniform(4, 16), random.uniform(4, 16)))
         
     for i in range(num_robots): 
         x = 0.5 + (i % 8) * 1.5
