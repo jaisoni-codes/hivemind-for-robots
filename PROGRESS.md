@@ -17,3 +17,5 @@
 - [x] A5: Detection training pipeline + runtime trained detector (5 classes)
 - [x] A6: Comms autonomy, buffering, TTL, and chatbot exact wording updates
 - [x] A7: Scenario Lab web page driven by real runs
+- [x] A8: Soak test, black-box logging, battery docking
+- [x] A9: Final reports, documentation, and COMPLIANCE ticks

@@ -27,7 +27,7 @@ class Detection:
     x: float = 0.0
     y: float = 0.0
     timestamp: float = field(default_factory=time.time)
-    seq_num: int = 0  # Added for A6 (buffering)
+    seq_num: int = 0
 
 @dataclass
 class ObjectRecord:
@@ -51,8 +51,8 @@ class Task:
     target_pose: Optional[Pose2D] = None
     target_label: Optional[str] = None
     assigned_robot: Optional[str] = None
-    timestamp: float = field(default_factory=time.time) # Added for A6
-    ttl: float = 5.0 # Added for A6 (Time to live in seconds)
+    timestamp: float = field(default_factory=time.time) 
+    ttl: float = 5.0 
 
 @dataclass
 class RobotStatus:
@@ -62,7 +62,8 @@ class RobotStatus:
     current_task_id: Optional[str]
     state: str
     loc_state: str = "OK" 
-    comms_state: str = "CONNECTED" # Added for A6 (CONNECTED, DEGRADED, DISCONNECTED, SAFE)
+    comms_state: str = "CONNECTED" 
+    battery_level: float = 100.0 # Added for A8
     timestamp: float = field(default_factory=time.time)
 
 @dataclass
