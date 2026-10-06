@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath('.'))
 import time
 import math
 import random
+import numpy as np
 from typing import Tuple
 from hive_fastsim.simulator import Simulator, FastRobot, Human
 from hive_dashboard.live_view import LiveDashboard
@@ -13,11 +14,11 @@ from hive_core.tracker import Tracker
 from hive_core.shield import SafetyShield
 from hive_core.types import Pose2D
 
-def run_scenario(seed=42, headless=False, use_shield=True) -> Tuple[int, int]:
+def run_scenario(seed=42, headless=False, use_shield=True, num_robots=4, target_tasks=10) -> Tuple[int, int, float]:
     random.seed(seed)
     np.random.seed(seed)
     
-    width, height = 12.0, 12.0
+    width, height = 20.0, 20.0 # larger to fit 32 robots
     sim = Simulator(width, height)
     dashboard = None
     if not headless:
@@ -26,21 +27,22 @@ def run_scenario(seed=42, headless=False, use_shield=True) -> Tuple[int, int]:
     tracker = Tracker()
     shield = SafetyShield()
     
-    # 5 moving humans for M4
     for i in range(5):
-        sim.add_human(Human(random.uniform(4, 8), random.uniform(4, 8)))
+        sim.add_human(Human(random.uniform(4, 16), random.uniform(4, 16)))
         
-    for i in range(4): # 4 robots
-        x = 0.5 + (i % 2) * 1.5
-        y = 0.5 + (i // 2) * 1.5
+    for i in range(num_robots): 
+        x = 0.5 + (i % 8) * 1.5
+        y = 0.5 + (i // 8) * 1.5
         sim.add_robot(FastRobot(f'robot_{i}', x, y, 0.0))
         
     dt = 0.1
-    for step in range(2000):
-        if sim.tasks_completed >= 10: # Finish faster for tests
+    start_time = time.time()
+    steps_taken = 0
+    for step in range(3000):
+        if sim.tasks_completed >= target_tasks:
             break
+        steps_taken += 1
 
-        # Simulate detection of humans
         detections = []
         for h in sim.humans:
             detections.append((h.x, h.y))
@@ -50,7 +52,7 @@ def run_scenario(seed=42, headless=False, use_shield=True) -> Tuple[int, int]:
         if step % 20 == 0:
             for r in sim.robots:
                 if not r.path:
-                    goal = (random.uniform(2, 11), random.uniform(2, 11))
+                    goal = (random.uniform(2, 18), random.uniform(2, 18))
                     r.path = a_star(grid, (r.pose.x, r.pose.y), goal)
                     if r.path:
                         sim.tasks_completed += 1
@@ -87,9 +89,9 @@ def run_scenario(seed=42, headless=False, use_shield=True) -> Tuple[int, int]:
         import matplotlib.pyplot as plt
         plt.close('all')
         
-    print(f"Scenario Seed {seed} | Shield {use_shield} | Tasks: {sim.tasks_completed} | Collisions: {sim.collisions}")
-    return sim.tasks_completed, sim.collisions
+    sim_duration = steps_taken * dt
+    # print(f"Scenario Seed {seed} | Shield {use_shield} | Robots {num_robots} | Tasks: {sim.tasks_completed} | Collisions: {sim.collisions} | Time: {sim_duration:.1f}s")
+    return sim.tasks_completed, sim.collisions, sim_duration
 
-import numpy as np
 if __name__ == '__main__':
     run_scenario(42, use_shield=True)

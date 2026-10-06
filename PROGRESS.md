@@ -7,3 +7,5 @@
 - [x] M4: Tracker + predictor + Safety Shield + ablation
 - [x] M5-M7: ROS 2 / Gazebo adapters
 - [x] M8: Chatbot + memory integration
+- [x] M9: Scale and benchmarks
+- [x] M12: Polish and repo completion
