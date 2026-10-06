@@ -7,8 +7,8 @@ class Pose2D:
     x: float
     y: float
     theta: float
-    covariance: float = 0.01  # added for A1
-    match_score: float = 1.0  # added for A1
+    covariance: float = 0.01
+    match_score: float = 1.0
 
 @dataclass
 class ScanFrame:
@@ -27,6 +27,7 @@ class Detection:
     x: float = 0.0
     y: float = 0.0
     timestamp: float = field(default_factory=time.time)
+    seq_num: int = 0  # Added for A6 (buffering)
 
 @dataclass
 class ObjectRecord:
@@ -37,7 +38,7 @@ class ObjectRecord:
     first_seen: float
     last_seen: float
     seen_count: int
-    state: str  # ACTIVE, STALE, MOVED, GONE
+    state: str 
     history: List[Tuple[Pose2D, float]]
     observed_by: List[str]
     is_dynamic: bool
@@ -45,11 +46,13 @@ class ObjectRecord:
 @dataclass
 class Task:
     id: str
-    type: str  # GOTO_OBJECT, INSPECT, EXPLORE, VERIFY, REFRESH, RETURN_TO_DOCK
+    type: str  
     priority: int
     target_pose: Optional[Pose2D] = None
     target_label: Optional[str] = None
     assigned_robot: Optional[str] = None
+    timestamp: float = field(default_factory=time.time) # Added for A6
+    ttl: float = 5.0 # Added for A6 (Time to live in seconds)
 
 @dataclass
 class RobotStatus:
@@ -58,7 +61,8 @@ class RobotStatus:
     velocity: Tuple[float, float]
     current_task_id: Optional[str]
     state: str
-    loc_state: str = "OK"  # OK, DEGRADED, LOST (added for A1)
+    loc_state: str = "OK" 
+    comms_state: str = "CONNECTED" # Added for A6 (CONNECTED, DEGRADED, DISCONNECTED, SAFE)
     timestamp: float = field(default_factory=time.time)
 
 @dataclass
@@ -66,3 +70,4 @@ class Event:
     type: str
     payload: Dict
     timestamp: float = field(default_factory=time.time)
+    seq_num: int = 0
