@@ -20,10 +20,13 @@ def test_m3_brain_allocation_and_fault():
     
     assert brain.tasks.robot_assignments.get("r1") == "t1"
     
-    # Simulate time passing so r1 is dead (>3s)
-    time.sleep(3.1)
+    # Simulate time passing so r1 is dead (>3s) robustly without time.sleep
+    brain.robots["r1"].timestamp = time.time() - 5.0
     
     brain.update_robot_status(RobotStatus(id="r2", pose=Pose2D(0, 10, 0), velocity=(0,0), current_task_id=None, state="IDLE", timestamp=time.time()))
+    
+    # Also force last_allocation_time back to allow reallocation
+    brain.last_allocation_time = 0.0
     
     brain.allocate()
     
@@ -34,5 +37,5 @@ def test_m3_brain_allocation_and_fault():
 def test_m3_curiosity():
     mem = LivingMemory()
     brain = Brain()
-    # Mocking curiosity for M3 completion (we handle refresh directly or through chat now)
+    # Mocking curiosity for M3 completion
     assert True
