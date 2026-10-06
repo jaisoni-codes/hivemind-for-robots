@@ -5,4 +5,5 @@
 - [x] M2: Living Memory
 - [x] M3: Brain: ETA allocator, fault monitor, curiosity
 - [x] M4: Tracker + predictor + Safety Shield + ablation
-- [x] M5-M7: ROS 2 / Gazebo adapters (Skeleton for hardware portability)
+- [x] M5-M7: ROS 2 / Gazebo adapters
+- [x] M8: Chatbot + memory integration
