@@ -2,6 +2,7 @@ import math
 import numpy as np
 from typing import List, Tuple, Dict
 from hive_core.types import Pose2D
+from hive_core.config import is_enabled
 
 class SafetyShield:
     def __init__(self, robot_radius=0.3, max_v=1.0, max_w=2.0):
@@ -9,13 +10,22 @@ class SafetyShield:
         self.max_v = max_v
         self.max_w = max_w
         self.dt = 0.5
-        self.predict_time = 2.0  # 2s horizon
+        self.predict_time = 2.0
         self.safe_dist = 0.3
 
     def compute_safe_velocity(self, pose: Pose2D, target_v: float, target_w: float, 
                               dynamic_predictions: Dict[str, List[Tuple[float, float]]],
                               other_robots: List[Pose2D],
                               use_shield: bool = True) -> Tuple[float, float]:
+        
+        # A3: Occlusion-aware risk speed
+        if is_enabled('occlusion_risk'):
+            # In a real system, this queries the raycast visibility polygon.
+            # Here we simulate the cap for safety around unseen corners.
+            occlusion_cap = 0.5 # capped speed
+            if target_v > occlusion_cap:
+                target_v = occlusion_cap
+        
         if not use_shield:
             return target_v, target_w
 

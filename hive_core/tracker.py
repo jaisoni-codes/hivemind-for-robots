@@ -1,8 +1,9 @@
 import math
 import numpy as np
+import pickle
+import os
 from typing import List, Dict, Tuple
-import time
-from hive_core.types import Pose2D
+from hive_core.config import is_enabled
 
 class DynamicTrack:
     def __init__(self, track_id: str, x: float, y: float, timestamp: float):
@@ -12,53 +13,51 @@ class DynamicTrack:
         self.vx = 0.0
         self.vy = 0.0
         self.last_update = timestamp
-        # Alpha-beta filter parameters (simple alternative to full Kalman for fastsim)
         self.alpha = 0.6
         self.beta = 0.4
         self.active = True
+        
+        # History of past 4 steps (at ~0.5s intervals) for MLP predictor
+        self.history = [[x, y]] * 4
+        self.history_times = [timestamp] * 4
 
     def update(self, x: float, y: float, timestamp: float):
         dt = timestamp - self.last_update
         if dt <= 0:
             return
             
-        # Predict
-        pred_x = self.x + self.vx * dt
-        pred_y = self.y + self.vy * dt
+        residual_x = x - (self.x + self.vx * dt)
+        residual_y = y - (self.y + self.vy * dt)
         
-        # Update
-        residual_x = x - pred_x
-        residual_y = y - pred_y
-        
-        self.x = pred_x + self.alpha * residual_x
-        self.y = pred_y + self.alpha * residual_y
-        self.vx = self.vx + (self.beta / dt) * residual_x
-        self.vy = self.vy + (self.beta / dt) * residual_y
+        self.x += self.vx * dt + self.alpha * residual_x
+        self.y += self.vy * dt + self.alpha * residual_y
+        self.vx += (self.beta / dt) * residual_x
+        self.vy += (self.beta / dt) * residual_y
         self.last_update = timestamp
-
-    def predict_future(self, horizon_s: float, steps: int) -> List[Tuple[float, float]]:
-        predictions = []
-        dt = horizon_s / steps
-        for i in range(1, steps + 1):
-            predictions.append((self.x + self.vx * (i * dt), self.y + self.vy * (i * dt)))
-        return predictions
+        
+        # Update history
+        self.history.append([self.x, self.y])
+        self.history_times.append(timestamp)
+        if len(self.history) > 4:
+            self.history.pop(0)
+            self.history_times.pop(0)
 
 class Tracker:
     def __init__(self):
         self.tracks: Dict[str, DynamicTrack] = {}
         self.association_radius = 1.0
+        self.model = None
+        if os.path.exists('hive_ml/predictor.pkl'):
+            with open('hive_ml/predictor.pkl', 'rb') as f:
+                self.model = pickle.load(f)
         
     def process_detections(self, detections: List[Tuple[float, float]], timestamp: float):
         unassigned_detections = list(detections)
-        
-        # Associate
         for track_id, track in list(self.tracks.items()):
             if not track.active:
                 continue
-                
-            # Predict to current time
             dt = timestamp - track.last_update
-            if dt > 1.0: # Lost track
+            if dt > 1.0:
                 track.active = False
                 continue
                 
@@ -78,16 +77,41 @@ class Tracker:
                 track.update(best_det[0], best_det[1], timestamp)
                 unassigned_detections.remove(best_det)
             else:
-                track.active = False # Mark inactive if no detection
+                track.active = False
                 
-        # Create new tracks
         for d in unassigned_detections:
             new_id = f"trk_{int(timestamp*1000)}_{len(self.tracks)}"
             self.tracks[new_id] = DynamicTrack(new_id, d[0], d[1], timestamp)
             
     def get_predictions(self, horizon_s: float = 3.0, steps: int = 6) -> Dict[str, List[Tuple[float, float]]]:
         preds = {}
+        use_mlp = is_enabled('prediction') and self.model is not None
+        
         for t_id, track in self.tracks.items():
-            if track.active:
-                preds[t_id] = track.predict_future(horizon_s, steps)
+            if not track.active:
+                continue
+                
+            track_preds = []
+            if use_mlp:
+                try:
+                    # Format history relative to latest point
+                    hist = np.array(track.history)
+                    origin = hist[-1].copy()
+                    hist_rel = (hist - origin).flatten()
+                    
+                    # Predict 6 steps
+                    future_rel = self.model.predict([hist_rel])[0]
+                    future_rel = future_rel.reshape(steps, 2)
+                    for px, py in future_rel:
+                        track_preds.append((float(origin[0] + px), float(origin[1] + py)))
+                except Exception:
+                    use_mlp = False # Fallback
+            
+            if not use_mlp:
+                dt = horizon_s / steps
+                for i in range(1, steps + 1):
+                    track_preds.append((track.x + track.vx * (i * dt), track.y + track.vy * (i * dt)))
+            
+            preds[t_id] = track_preds
+            
         return preds

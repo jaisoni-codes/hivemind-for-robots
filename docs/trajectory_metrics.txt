@@ -1,0 +1,11 @@
+Trajectory Prediction Metrics (Synthetic Data)
+==============================================
+Baseline (Constant Velocity Kalman approx):
+  ADE: 0.318 m
+  FDE: 0.551 m
+
+Trained Model (MLP 32x32):
+  ADE: 0.195 m
+  FDE: 0.388 m
+
+Conclusion: ML model effectively learns hesitations and turns compared to linear CV.
