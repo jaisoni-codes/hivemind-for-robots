@@ -7,6 +7,8 @@ class Pose2D:
     x: float
     y: float
     theta: float
+    covariance: float = 0.01  # added for A1
+    match_score: float = 1.0  # added for A1
 
 @dataclass
 class ScanFrame:
@@ -56,6 +58,7 @@ class RobotStatus:
     velocity: Tuple[float, float]
     current_task_id: Optional[str]
     state: str
+    loc_state: str = "OK"  # OK, DEGRADED, LOST (added for A1)
     timestamp: float = field(default_factory=time.time)
 
 @dataclass

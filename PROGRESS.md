@@ -9,3 +9,5 @@
 - [x] M8: Chatbot + memory integration
 - [x] M9: Scale and benchmarks
 - [x] M12: Polish and repo completion
+- [x] A0: Audit, COMPLIANCE.md, Config flags
+- [x] A1: Localisation confidence, write gate, map integrity (Scenarios 3, 4, 5)
