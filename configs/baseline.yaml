@@ -1,0 +1,15 @@
+prediction: off
+shield: off
+negative_observation: off
+confidence_decay: off
+reservations: off
+ranking: euclid
+loc_confidence_gate: off
+landmarks: off
+map_write_gate: off
+comms_autonomy: off
+battery_aware: off
+occlusion_risk: off
+curiosity: off
+hierarchy: off
+detector: oracle

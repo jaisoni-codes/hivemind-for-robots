@@ -1,0 +1,15 @@
+prediction: on
+shield: on
+negative_observation: on
+confidence_decay: on
+reservations: on
+ranking: path_eta
+loc_confidence_gate: on
+landmarks: on
+map_write_gate: on
+comms_autonomy: on
+battery_aware: on
+occlusion_risk: on
+curiosity: on
+hierarchy: on
+detector: trained
