@@ -16,3 +16,4 @@
 - [x] A4: Natural landmarks + relocalisation (Kidnapped robot recovery)
 - [x] A5: Detection training pipeline + runtime trained detector (5 classes)
 - [x] A6: Comms autonomy, buffering, TTL, and chatbot exact wording updates
+- [x] A7: Scenario Lab web page driven by real runs

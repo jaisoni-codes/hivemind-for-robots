@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HIVEMIND Scenario Lab</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; height: 100vh; }
+        #sidebar { width: 300px; background: #2c3e50; color: white; overflow-y: auto; padding: 10px; }
+        #main { flex-grow: 1; display: flex; flex-direction: column; background: #ecf0f1; overflow-y: auto; }
+        #header { padding: 20px; background: #34495e; color: white; text-align: center; }
+        #content { display: flex; flex-grow: 1; padding: 20px; gap: 20px; }
+        .panel { flex: 1; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .scenario-btn { display: block; width: 100%; padding: 10px; margin-bottom: 5px; background: #34495e; color: white; border: none; text-align: left; cursor: pointer; border-radius: 4px; }
+        .scenario-btn:hover { background: #1abc9c; }
+        .pass { color: #27ae60; font-weight: bold; }
+        .fail { color: #e74c3c; font-weight: bold; }
+        .mock-canvas { width: 100%; height: 300px; background: #bdc3c7; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; font-weight: bold; color: #555; }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h2>Scenarios (35)</h2>
+        <div id="scenario-list"></div>
+    </div>
+    <div id="main">
+        <div id="header">
+            <h1>HIVEMIND Scenario Lab</h1>
+            <h3>Summary: HIVEMIND passes 12 of 35 | Baseline passes 0 of 35</h3>
+        </div>
+        <div id="info-bar" style="padding: 20px; background: white; margin: 20px 20px 0 20px; border-radius: 8px;">
+            <h2 id="s-title">Select a scenario from the left</h2>
+            <p><strong>Metric:</strong> <span id="s-metric"></span></p>
+            <p><strong>HIVEMIND Mechanism:</strong> <span id="s-mech"></span></p>
+        </div>
+        <div id="content">
+            <div class="panel">
+                <h2>Baseline Run</h2>
+                <div class="mock-canvas">FASTSIM REPLAY PLACEHOLDER</div>
+                <p><strong>Fails by:</strong> <span id="b-fails"></span></p>
+                <p><strong>Status:</strong> <span id="b-status"></span></p>
+            </div>
+            <div class="panel">
+                <h2>HIVEMIND Run</h2>
+                <div class="mock-canvas">FASTSIM REPLAY PLACEHOLDER</div>
+                <p><strong>Status:</strong> <span id="h-status"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = [{"id": 1, "name": "Unknown Start", "tier": "T1", "baseline_fails_by": "No goal without a map", "hivemind_mechanism": "SLAM + frontier exploration", "metric": "% area mapped vs time", "baseline_pass": false, "hivemind_pass": true}, {"id": 2, "name": "Curiosity Vs Routine", "tier": "T2", "baseline_fails_by": "Map never improves", "hivemind_mechanism": "Curiosity patrols of stale zones", "metric": "Map freshness", "baseline_pass": false, "hivemind_pass": false}, {"id": 3, "name": "Odometry Drift", "tier": "T1", "baseline_fails_by": "Pose error grows", "hivemind_mechanism": "Scan-to-map matching + loop closure", "metric": "Pose error per metre", "baseline_pass": false, "hivemind_pass": true}, {"id": 4, "name": "Identical Aisles", "tier": "T1", "baseline_fails_by": "Robot believes it is in another aisle", "hivemind_mechanism": "Multi-hypothesis pose, ratio test", "metric": "Wrong-aisle rate", "baseline_pass": false, "hivemind_pass": true}, {"id": 5, "name": "Wrong Loop Closure", "tier": "T3", "baseline_fails_by": "Map warps", "hivemind_mechanism": "Geometric verification + map rollback", "metric": "Map consistency", "baseline_pass": false, "hivemind_pass": false}, {"id": 6, "name": "Narrow Corridor", "tier": "T1", "baseline_fails_by": "Clips walls", "hivemind_mechanism": "Footprint-aware inflated costmap", "metric": "Collisions", "baseline_pass": false, "hivemind_pass": true}, {"id": 7, "name": "Gap Looks Open", "tier": "T2", "baseline_fails_by": "Gets stuck", "hivemind_mechanism": "Configuration-space planning", "metric": "Stuck rate", "baseline_pass": false, "hivemind_pass": false}, {"id": 8, "name": "Pallet Appears", "tier": "T1", "baseline_fails_by": "Collides with stale map", "hivemind_mechanism": "Local map update + replan", "metric": "Detection-to-replan latency", "baseline_pass": false, "hivemind_pass": true}, {"id": 9, "name": "Dead End", "tier": "T2", "baseline_fails_by": "Repeats attempts", "hivemind_mechanism": "No-progress detect, edge BLOCKED", "metric": "Retries", "baseline_pass": false, "hivemind_pass": false}, {"id": 10, "name": "Temporary Restricted Zone", "tier": "T3", "baseline_fails_by": "Enters zone", "hivemind_mechanism": "BLOCKED state with decay + VERIFY", "metric": "Zone violations", "baseline_pass": false, "hivemind_pass": false}, {"id": 11, "name": "Layout Changes", "tier": "T3", "baseline_fails_by": "Old map invalid", "hivemind_mechanism": "Change detection + map update", "metric": "Map IoU after change", "baseline_pass": false, "hivemind_pass": false}, {"id": 12, "name": "Human Blocks Robot", "tier": "T3", "baseline_fails_by": "Oscillates", "hivemind_mechanism": "Wait then detour policy", "metric": "Oscillation count", "baseline_pass": false, "hivemind_pass": false}, {"id": 13, "name": "Object Moved", "tier": "T1", "baseline_fails_by": "DB points to old spot", "hivemind_mechanism": "Negative observation -> MOVED -> search", "metric": "Relocation accuracy", "baseline_pass": false, "hivemind_pass": true}, {"id": 14, "name": "Stale Memory", "tier": "T2", "baseline_fails_by": "Blind trip", "hivemind_mechanism": "VERIFY task first", "metric": "Wasted trips", "baseline_pass": false, "hivemind_pass": false}, {"id": 15, "name": "Several Extinguishers", "tier": "T2", "baseline_fails_by": "Euclid-nearest is behind a wall", "hivemind_mechanism": "Pair choice by path ETA", "metric": "Task time vs distance rule", "baseline_pass": false, "hivemind_pass": false}, {"id": 16, "name": "World Keeps Changing", "tier": "T2", "baseline_fails_by": "One-time map decays", "hivemind_mechanism": "Living memory with decay", "metric": "Memory accuracy over time", "baseline_pass": false, "hivemind_pass": false}, {"id": 17, "name": "Sudden Human", "tier": "T1", "baseline_fails_by": "No prediction", "hivemind_mechanism": "Tracker + trained predictor", "metric": "Collisions, near-misses", "baseline_pass": false, "hivemind_pass": true}, {"id": 18, "name": "Human Turns Suddenly", "tier": "T2", "baseline_fails_by": "Wrong prediction", "hivemind_mechanism": "Uncertainty-aware margin", "metric": "Near-misses", "baseline_pass": false, "hivemind_pass": false}, {"id": 19, "name": "Forklift", "tier": "T1", "baseline_fails_by": "Margin too small", "hivemind_mechanism": "Class-specific margin + swept area", "metric": "Collisions", "baseline_pass": false, "hivemind_pass": true}, {"id": 20, "name": "Several Humans", "tier": "T2", "baseline_fails_by": "Local minimum", "hivemind_mechanism": "Multi-agent prediction, wait/retreat", "metric": "Success rate", "baseline_pass": false, "hivemind_pass": false}, {"id": 21, "name": "Blind Corner", "tier": "T3", "baseline_fails_by": "Late reaction", "hivemind_mechanism": "Occlusion-aware speed cap", "metric": "Near-misses", "baseline_pass": false, "hivemind_pass": false}, {"id": 22, "name": "Human Crosses Path", "tier": "T2", "baseline_fails_by": "Late braking", "hivemind_mechanism": "Arrival-time-aware risk", "metric": "Min time-to-collision", "baseline_pass": false, "hivemind_pass": false}, {"id": 23, "name": "Unseen Not Absent", "tier": "T3", "baseline_fails_by": "Treats unseen as free", "hivemind_mechanism": "Unknown-space risk layer", "metric": "Collisions at occluded crossing", "baseline_pass": false, "hivemind_pass": false}, {"id": 24, "name": "Glass Shiny Surface", "tier": "T3", "baseline_fails_by": "Misses obstacle", "hivemind_mechanism": "Confidence + multi-frame", "metric": "Collisions", "baseline_pass": false, "hivemind_pass": false}, {"id": 25, "name": "Lighting Change", "tier": "T3", "baseline_fails_by": "Camera fails", "hivemind_mechanism": "LiDAR-first navigation", "metric": "Nav success in dark zone", "baseline_pass": false, "hivemind_pass": false}, {"id": 26, "name": "Dust Sensor Noise", "tier": "T3", "baseline_fails_by": "Ghost obstacles", "hivemind_mechanism": "Filtering + confidence-aware speed", "metric": "False-stop rate", "baseline_pass": false, "hivemind_pass": false}, {"id": 27, "name": "Brain Link Lost", "tier": "T1", "baseline_fails_by": "Robot helpless", "hivemind_mechanism": "Autonomy modes, local goal, shield", "metric": "Safe-stop rate", "baseline_pass": false, "hivemind_pass": true}, {"id": 28, "name": "Robot Dies", "tier": "T1", "baseline_fails_by": "Task stuck", "hivemind_mechanism": "Heartbeat + reassignment", "metric": "Recovery time", "baseline_pass": false, "hivemind_pass": true}, {"id": 29, "name": "Two Robots One Corridor", "tier": "T1", "baseline_fails_by": "Deadlock", "hivemind_mechanism": "Reservation, priority, pull-over bay", "metric": "Deadlocks per 100 runs", "baseline_pass": false, "hivemind_pass": true}, {"id": 30, "name": "Traffic Jam", "tier": "T2", "baseline_fails_by": "Queue on shortest path", "hivemind_mechanism": "Learned ETA + congestion-aware assignment", "metric": "Throughput", "baseline_pass": false, "hivemind_pass": false}, {"id": 31, "name": "Battery Low", "tier": "T4", "baseline_fails_by": "Dies mid-task", "hivemind_mechanism": "Battery-aware allocation + dock", "metric": "Tasks lost", "baseline_pass": false, "hivemind_pass": false}, {"id": 32, "name": "Wifi Dead Zone", "tier": "T3", "baseline_fails_by": "Stale commands", "hivemind_mechanism": "Buffering, command TTL, degraded mode", "metric": "Task completion", "baseline_pass": false, "hivemind_pass": false}, {"id": 33, "name": "Swarm Grows 4 To 64", "tier": "T1", "baseline_fails_by": "Compute blow-up", "hivemind_mechanism": "Zones + decentralised avoidance", "metric": "Compute vs N", "baseline_pass": false, "hivemind_pass": true}, {"id": 34, "name": "Brain Overload", "tier": "T2", "baseline_fails_by": "Central bottleneck", "hivemind_mechanism": "Hierarchical split", "metric": "Brain ms per cycle", "baseline_pass": false, "hivemind_pass": false}, {"id": 35, "name": "Command Latency 500Ms", "tier": "T2", "baseline_fails_by": "Acts on stale command", "hivemind_mechanism": "Robot-side safety decisions", "metric": "Collisions under lag", "baseline_pass": false, "hivemind_pass": false}];
+        
+        const listDiv = document.getElementById('scenario-list');
+        scenarios.forEach(s => {
+            const btn = document.createElement('button');
+            btn.className = 'scenario-btn';
+            btn.innerHTML = `[${s.tier}] S${s.id}: ${s.name}`;
+            btn.onclick = () => loadScenario(s);
+            listDiv.appendChild(btn);
+        });
+        
+        function loadScenario(s) {
+            document.getElementById('s-title').innerText = `Scenario ${s.id}: ${s.name}`;
+            document.getElementById('s-metric').innerText = s.metric;
+            document.getElementById('s-mech').innerText = s.hivemind_mechanism;
+            
+            document.getElementById('b-fails').innerText = s.baseline_fails_by;
+            
+            const bStat = document.getElementById('b-status');
+            bStat.innerText = s.baseline_pass ? "PASS" : "FAIL";
+            bStat.className = s.baseline_pass ? "pass" : "fail";
+            
+            const hStat = document.getElementById('h-status');
+            hStat.innerText = s.hivemind_pass ? "PASS" : "FAIL";
+            hStat.className = s.hivemind_pass ? "pass" : "fail";
+        }
+    </script>
+</body>
+</html>
