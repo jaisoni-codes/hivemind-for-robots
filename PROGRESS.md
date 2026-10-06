@@ -14,3 +14,4 @@
 - [x] A2: Scenario harness (35 YAMLs, scenarios.csv, T1 evaluations)
 - [x] A3: Trained trajectory predictor + occlusion-aware speed
 - [x] A4: Natural landmarks + relocalisation (Kidnapped robot recovery)
+- [x] A5: Detection training pipeline + runtime trained detector (5 classes)

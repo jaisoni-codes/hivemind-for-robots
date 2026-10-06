@@ -1,7 +1,10 @@
 import numpy as np
 import math
+import pickle
+import os
 from typing import List, Tuple, Dict
 from hive_core.types import Pose2D
+from hive_core.config import is_enabled
 
 class FastRobot:
     def __init__(self, robot_id: str, x: float, y: float, theta: float):
@@ -42,16 +45,49 @@ class Human:
             self.theta = -self.theta
             ny = self.y
             
-        # Humans bounce off stopped robots (but if robot moves into human, collision counts below)
         for r in robots:
             if math.hypot(nx - r.pose.x, ny - r.pose.y) < (self.radius + r.radius):
-                self.theta = math.pi - self.theta # Bounce
+                self.theta = math.pi - self.theta
                 nx = self.x
                 ny = self.y
                 break
                 
         self.x = nx
         self.y = ny
+
+class MockCameraDetector:
+    def __init__(self):
+        self.model = None
+        if os.path.exists('hive_ml/detector.pkl'):
+            with open('hive_ml/detector.pkl', 'rb') as f:
+                self.model = pickle.load(f)
+                
+        self.base_vectors = {
+            'fire_extinguisher': np.array([5.0]*32),
+            'pallet': np.array([-2.0]*32),
+            'toolbox': np.array([0.5]*32),
+            'human': np.array([8.0]*32),
+            'forklift': np.array([-6.0]*32),
+        }
+        self.classes = ['fire_extinguisher', 'pallet', 'toolbox', 'human', 'forklift']
+
+    def detect(self, true_label: str) -> Tuple[str, float]:
+        if not is_enabled('detector'): # 'trained' mode
+            return true_label, 1.0 # Oracle mode
+            
+        if self.model is None or true_label not in self.base_vectors:
+            return true_label, 1.0
+            
+        # Simulate taking a picture and extracting embedding
+        base = self.base_vectors[true_label]
+        noise = np.random.normal(0, 2.5, 32)
+        feature = base + noise
+        
+        # ML Prediction
+        pred_idx = self.model.predict([feature])[0]
+        prob = np.max(self.model.predict_proba([feature])[0])
+        
+        return self.classes[pred_idx], prob
 
 class Simulator:
     def __init__(self, width: float=12.0, height: float=12.0):
@@ -63,6 +99,7 @@ class Simulator:
         self.tasks_completed = 0
         self.collisions = 0
         self.time = 0.0
+        self.camera = MockCameraDetector()
         
     def add_robot(self, robot: FastRobot):
         self.robots.append(robot)
@@ -83,7 +120,6 @@ class Simulator:
         self.check_collisions()
 
     def check_collisions(self):
-        # Allow overlaps but count them
         for i, r in enumerate(self.robots):
             for j in range(i+1, len(self.robots)):
                 r2 = self.robots[j]
